@@ -33,6 +33,10 @@ var meter: int = 0
 var debug_hitbox: Rect2 = Rect2()
 var stage_left: float = Tuning.STAGE_LEFT
 var stage_right: float = Tuning.STAGE_RIGHT
+var is_running: bool = false
+var run_direction: int = 0
+var last_run_tap_direction: int = 0
+var run_tap_timer: float = 0.0
 
 func reset_player() -> void:
 	stage_left = Tuning.STAGE_LEFT
@@ -59,6 +63,10 @@ func reset_player() -> void:
 	health = Tuning.PLAYER_MAX_HEALTH
 	meter = 0
 	debug_hitbox = Rect2()
+	is_running = false
+	run_direction = 0
+	last_run_tap_direction = 0
+	run_tap_timer = 0.0
 	queue_redraw()
 
 func tick(delta: float, frozen: bool, dummy: Variant) -> void:
@@ -110,6 +118,7 @@ func _update_movement(delta: float) -> void:
 		return
 	var horizontal_intent: float = Input.get_axis(&"move_left", &"move_right")
 	var depth_intent: float = Input.get_axis(&"move_up", &"move_down")
+	_update_run_input(delta, horizontal_intent)
 	if attack_phase == AttackPhase.READY and not is_zero_approx(horizontal_intent):
 		facing = 1 if horizontal_intent > 0.0 else -1
 
@@ -119,10 +128,12 @@ func _update_movement(delta: float) -> void:
 		if is_zero_approx(horizontal_intent) or _movement_locked():
 			velocity.x = move_toward(velocity.x, 0.0, Tuning.GROUND_DECELERATION * delta)
 		else:
+			var target_speed: float = Tuning.GROUND_RUN_MAX_SPEED if is_running else Tuning.GROUND_MAX_SPEED
+			var acceleration: float = Tuning.GROUND_RUN_ACCELERATION if is_running else Tuning.GROUND_ACCELERATION
 			velocity.x = move_toward(
 				velocity.x,
-				horizontal_intent * Tuning.GROUND_MAX_SPEED,
-				Tuning.GROUND_ACCELERATION * delta
+				horizontal_intent * target_speed,
+				acceleration * delta
 			)
 		if Input.is_action_just_pressed(&"jump") and attack_phase == AttackPhase.READY:
 			velocity.y = -sqrt(2.0 * Tuning.GRAVITY * Tuning.JUMP_HEIGHT)
@@ -149,6 +160,49 @@ func _update_movement(delta: float) -> void:
 			_end_attack(true)
 	else:
 		move_state = MoveState.AIRBORNE
+
+func _update_run_input(delta: float, horizontal_intent: float) -> void:
+	if run_tap_timer > 0.0:
+		run_tap_timer = maxf(run_tap_timer - delta, 0.0)
+		if run_tap_timer <= 0.0:
+			last_run_tap_direction = 0
+
+	if _movement_locked():
+		is_running = false
+		run_direction = 0
+		return
+
+	var pressed_direction: int = 0
+	if Input.is_action_just_pressed(&"move_left"):
+		pressed_direction -= 1
+	if Input.is_action_just_pressed(&"move_right"):
+		pressed_direction += 1
+	if pressed_direction != 0:
+		_register_run_tap(pressed_direction)
+
+	if is_running and _intent_direction(horizontal_intent) != run_direction:
+		is_running = false
+		run_direction = 0
+
+func _register_run_tap(direction: int) -> void:
+	if last_run_tap_direction == direction and run_tap_timer > 0.0:
+		is_running = true
+		run_direction = direction
+		last_run_tap_direction = 0
+		run_tap_timer = 0.0
+		return
+	last_run_tap_direction = direction
+	run_tap_timer = Tuning.RUN_DOUBLE_TAP_WINDOW
+	if run_direction != direction:
+		is_running = false
+		run_direction = 0
+
+func _intent_direction(horizontal_intent: float) -> int:
+	if horizontal_intent > 0.0:
+		return 1
+	if horizontal_intent < 0.0:
+		return -1
+	return 0
 
 func _movement_locked() -> bool:
 	return attack_phase != AttackPhase.READY or hurtstun_timer > 0.0

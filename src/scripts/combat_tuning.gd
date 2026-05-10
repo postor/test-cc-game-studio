@@ -14,8 +14,11 @@ const DUMMY_CORPSE_DURATION: float = 0.75
 const DUMMY_RESPAWN_OFFSET_X: float = 86.0
 
 const GROUND_MAX_SPEED: float = 220.0
+const GROUND_RUN_MAX_SPEED: float = 330.0
 const GROUND_ACCELERATION: float = 1800.0
+const GROUND_RUN_ACCELERATION: float = 2400.0
 const GROUND_DECELERATION: float = 2400.0
+const RUN_DOUBLE_TAP_WINDOW: float = 0.28
 const AIR_MAX_SPEED: float = 190.0
 const AIR_ACCELERATION: float = 900.0
 const GRAVITY: float = 1100.0

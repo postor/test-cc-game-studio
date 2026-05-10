@@ -46,7 +46,7 @@ Open `http://localhost:8080`.
 
 ## Controls
 
-- `A` / `D` or arrow keys: move
+- `A` / `D` or arrow keys: move; double-tap left or right to run
 - `Space`: jump
 - `J`: slash / air slash
 - `K`: launcher
