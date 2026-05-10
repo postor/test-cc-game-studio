@@ -1,0 +1,19 @@
+.git
+.github
+.claude
+CCGS Skill Testing Framework
+design
+docs
+production
+downloads
+dist
+build
+builds
+src/.godot
+Godot_v4.6.2-stable_win64.exe
+Godot_v4.6.2-stable_win64_console.exe
+*.zip
+*.tpz
+*.log
+*.tmp
+*.cache

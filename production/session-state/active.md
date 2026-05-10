@@ -1,0 +1,27 @@
+# Active Session State
+
+- **Task**: Playable demo implementation
+- **Status**: Demo implemented and smoke-tested
+- **Last Updated**: 2026-05-09
+- **Files**:
+  - design/gdd/game-concept.md
+  - design/art/art-bible.md
+  - design/gdd/systems-index.md
+  - design/gdd/input-control-mapping.md
+  - design/gdd/player-movement-controller.md
+  - design/gdd/combat-state-machine.md
+  - design/gdd/attack-data-timing.md
+  - design/gdd/hit-detection-hit-resolution.md
+  - src/project.godot
+  - src/scenes/Main.tscn
+  - src/scripts/main.gd
+  - src/scripts/player.gd
+  - src/scripts/training_dummy.gd
+  - src/scripts/combat_tuning.gd
+  - src/scripts/smoke_test.gd
+  - src/README.md
+  - CLAUDE.md
+  - .claude/docs/technical-preferences.md
+  - docs/engine-reference/godot/VERSION.md
+- **Sections**: Core MVP design specs through Hit Detection written; playable demo implemented.
+- **Next**: Open `src` in Godot and playtest the combo feel; then tune `src/scripts/combat_tuning.gd`.
